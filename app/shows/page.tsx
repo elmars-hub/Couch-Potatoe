@@ -2,10 +2,10 @@
 
 import MovieCard from "@/components/ui/functional/movie-card";
 import PaginationComponent from "@/components/ui/functional/paginationcomponent";
-import { fetchMovies, SortBy } from "@/lib/movies";
+import { fetchTvSeries, SortBy } from "@/lib/movies";
 import { useEffect, useState } from "react";
 
-interface Movie {
+interface TvShows {
   id: number;
   title: string;
   media_type: string;
@@ -15,7 +15,7 @@ interface Movie {
 }
 
 export default function Movies() {
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [movies, setMovies] = useState<TvShows[]>([]);
   const [activePage, setActivePage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState<SortBy>("popularity.desc");
@@ -27,13 +27,12 @@ export default function Movies() {
       try {
         setIsLoading(true);
         setError(null);
-        const res = await fetchMovies(activePage, sortBy);
+        const res = await fetchTvSeries(activePage, sortBy);
 
         if (res?.results) {
           setMovies(res.results);
           setActivePage(res.page);
           setTotalPages(res.total_pages);
-          console.log("Total pages:", res.total_pages); // Add this line
         } else {
           throw new Error("No results found");
         }
@@ -65,7 +64,7 @@ export default function Movies() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex items-baseline gap-4 my-10">
-        <h2 className="text-md uppercase font-semibold">Discover Movies</h2>
+        <h2 className="text-md uppercase font-semibold">Discover Shows</h2>
         <select
           className="w-[130px] border rounded py-1 px-2"
           value={sortBy}
@@ -89,15 +88,12 @@ export default function Movies() {
               <MovieCard key={item.id} item={item} type="movie" />
             ))}
       </div>
-      {totalPages > 1 && (
-        <div className="my-8 s">
-          <PaginationComponent
-            activePage={activePage}
-            totalPages={totalPages}
-            setActivePage={setActivePage}
-          />
-        </div>
-      )}
+      {/* Uncomment and implement PaginationComponent when ready */}
+      <PaginationComponent
+        activePage={activePage}
+        totalPages={totalPages}
+        setActivePage={setActivePage}
+      />
     </div>
   );
 }
