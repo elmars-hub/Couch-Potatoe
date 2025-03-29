@@ -16,6 +16,7 @@ import CreditsSection from "@/components/ui/functional/credits-section";
 import BookmarkButton from "@/components/ui/functional/bookmark-button";
 import { useAuthentication } from "@/context/AuthenticationContext";
 import Auth from "@/middleware/Auth";
+import BackButton from "@/components/ui/functional/back";
 
 interface Genre {
   id: number;
@@ -150,6 +151,8 @@ function Page() {
 
   return (
     <div className="container mx-auto p-4">
+      <BackButton />
+
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">{title}</h1>
         {isAuth && (
