@@ -1,15 +1,21 @@
-import { fetchDetails, MediaType, MovieDetails, TVDetails } from "@/lib/movies";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Image from "next/image";
+import {
+  fetchDetails,
+  fetchCredits,
+  MediaType,
+  MovieDetails,
+  TVDetails,
+  Cast,
+  Crew,
+} from "@/lib/movies";
 import CreditsSection from "@/components/ui/functional/credits-section";
 import BookmarkButton from "@/components/ui/functional/bookmark-button";
-
-interface Props {
-  params: {
-    type: string;
-    id: string;
-  };
-}
+import { useAuthentication } from "@/context/AuthenticationContext";
+import Auth from "@/middleware/Auth";
 
 interface Genre {
   id: number;
@@ -20,31 +26,117 @@ function isMovie(details: MovieDetails | TVDetails): details is MovieDetails {
   return "title" in details && "release_date" in details;
 }
 
-async function getDetails(
-  type: string,
-  id: string
-): Promise<MovieDetails | TVDetails> {
-  if (type !== "movie" && type !== "tv") {
-    notFound();
+function Page() {
+  const params = useParams();
+  const type = params.type as string;
+  const id = params.id as string;
+
+  const [details, setDetails] = useState<MovieDetails | TVDetails | null>(null);
+  const [cast, setCast] = useState<Cast[]>([]);
+  const [crew, setCrew] = useState<Crew[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [creditsLoading, setCreditsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [creditsError, setCreditsError] = useState<string | null>(null);
+
+  const { checkAuth } = useAuthentication();
+  const isAuth = checkAuth();
+
+  // Fetch media details
+  useEffect(() => {
+    async function loadDetails() {
+      setIsLoading(true);
+
+      if (type !== "movie" && type !== "tv") {
+        setError("Invalid media type");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const result = await fetchDetails(type as MediaType, parseInt(id));
+        setDetails(result);
+        console.log("Details loaded:", result);
+      } catch (err) {
+        console.error(`Failed to fetch media details: ${err}`);
+        setError("Failed to load media details");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (type && id) {
+      loadDetails();
+    }
+  }, [type, id]);
+
+  // Fetch credits separately
+  useEffect(() => {
+    async function loadCredits() {
+      setCreditsLoading(true);
+
+      if (type !== "movie" && type !== "tv") {
+        setCreditsError("Invalid media type");
+        setCreditsLoading(false);
+        return;
+      }
+
+      try {
+        const credits = await fetchCredits(type as MediaType, parseInt(id));
+        console.log("Credits loaded:", credits);
+
+        if (credits && typeof credits === "object") {
+          // Check for cast property
+          if ("cast" in credits && Array.isArray(credits.cast)) {
+            setCast(credits.cast);
+          } else {
+            console.warn("No cast found in credits data");
+            setCast([]);
+          }
+
+          // Check for crew property
+          if ("crew" in credits && Array.isArray(credits.crew)) {
+            setCrew(credits.crew);
+          } else {
+            console.warn("No crew found in credits data");
+            setCrew([]);
+          }
+        } else {
+          console.warn("Credits data is not in the expected format");
+          setCast([]);
+          setCrew([]);
+        }
+      } catch (err) {
+        console.error(`Failed to fetch credits: ${err}`);
+        setCreditsError("Failed to load cast and crew information");
+        setCast([]);
+        setCrew([]);
+      } finally {
+        setCreditsLoading(false);
+      }
+    }
+
+    if (type && id) {
+      loadCredits();
+    }
+  }, [type, id]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4 text-center">
+        <p className="text-lg">Loading...</p>
+      </div>
+    );
   }
 
-  try {
-    return await fetchDetails(type as MediaType, parseInt(id));
-  } catch (error) {
-    console.error(`Failed to fetch media details: ${error}`);
-    notFound();
-  }
-}
-
-export default async function MediaDetailsPage({ params }: Props) {
-  const { type, id } = params;
-  const details = await getDetails(type, id);
-
-  // Debugging: Check if credits are present
-  console.log("Details object:", details);
-
-  if (!details.credits) {
-    console.error("Credits data is missing from the details object.");
+  if (error || !details) {
+    return (
+      <div className="container mx-auto p-4 text-center">
+        <p className="text-lg text-red-500">
+          {error || "Something went wrong"}
+        </p>
+      </div>
+    );
   }
 
   const title = isMovie(details) ? details.title : details.name;
@@ -60,7 +152,13 @@ export default async function MediaDetailsPage({ params }: Props) {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">{title}</h1>
-        <BookmarkButton mediaId={parseInt(id)} mediaType={type} title={title} />
+        {isAuth && (
+          <BookmarkButton
+            mediaId={parseInt(id)}
+            mediaType={type}
+            title={title}
+          />
+        )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -99,12 +197,40 @@ export default async function MediaDetailsPage({ params }: Props) {
             </p>
           </div>
 
-          <CreditsSection
-            cast={details.credits?.cast ?? []}
-            crew={details.credits?.crew ?? []}
-          />
+          {creditsLoading ? (
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold mb-3">Cast & Crew</h2>
+              <p className="text-sm text-gray-500">
+                Loading cast and crew information...
+              </p>
+            </div>
+          ) : creditsError ? (
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold mb-3">Cast & Crew</h2>
+              <p className="text-sm text-gray-500">{creditsError}</p>
+            </div>
+          ) : cast.length > 0 || crew.length > 0 ? (
+            <CreditsSection cast={cast} crew={crew} />
+          ) : (
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold mb-3">Cast & Crew</h2>
+              <p className="text-sm text-gray-500">
+                No cast or crew information available
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+const MediaDetailsPage = () => {
+  return (
+    <Auth>
+      <Page />
+    </Auth>
+  );
+};
+
+export default MediaDetailsPage;

@@ -18,12 +18,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="relative isolate w-full min-h-screen flex flex-col">
         <AuthenticationProvider>
-          <AuthProvider>
-            <Header />
-            <main className="grow container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
-              {children}
-            </main>
-          </AuthProvider>
+          <Header />
+          <main className="grow container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+            {children}
+          </main>
         </AuthenticationProvider>
       </body>
     </html>

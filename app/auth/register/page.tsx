@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/lib/auth";
 import { z } from "zod";
+import { supabase } from "@/lib/supabase";
 import { registerSchema, RegisterFormData } from "@/lib/validations"; // Assuming you have this file
+import { useAuthentication } from "@/context/AuthenticationContext";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -19,8 +20,10 @@ const RegisterPage = () => {
     form?: string;
   }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const router = useRouter();
+  const { loginUser } = useAuthentication();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,9 +53,25 @@ const RegisterPage = () => {
       setErrors({});
       setIsLoading(true);
 
-      await signUp(formData.email, formData.password, formData.displayName);
-      router.push("/");
+      const response = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: { displayName: formData.displayName }, // Save display name in user metadata
+          emailRedirectTo: `${window.location.origin}/auth/callback`, // Add redirect URL for email verification
+        },
+      });
+
+      if (response.data.session) {
+        loginUser(response.data.user, response.data.session);
+
+        router.push("/"); // More specific redirect
+      } else if (response.error) {
+        setError(response.error?.message);
+      }
     } catch (err) {
+      setError(err?.message);
+
       // Handle Zod validation errors
       if (err instanceof z.ZodError) {
         const fieldErrors: typeof errors = {};

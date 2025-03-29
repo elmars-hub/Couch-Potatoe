@@ -5,15 +5,12 @@ import {
   type TrendingResult,
   type TimeWindow,
 } from "@/lib/movies";
-// import { useAuth } from "@/context/AuthContext";
-// import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import MovieCard from "@/components/ui/functional/movie-card";
 import { Button } from "@/components/ui/button";
 import MovieCardSkeleton from "@/components/ui/functional/movie-card-skeleton";
 
 export default function Home() {
-  // const { user, signOut, getUserDisplayName } = useAuth();
   // const [displayName, setDisplayName] = useState("");
   // const router = useRouter();
   const [data, setData] = useState<TrendingResult[]>([]);

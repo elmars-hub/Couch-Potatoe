@@ -21,8 +21,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
-  // const auth = useAuth();
-  const { setUser, setToken } = useAuthentication();
+  const { loginUser } = useAuthentication();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -60,12 +59,13 @@ export default function LoginPage() {
         password: formData.password,
       });
 
-      console.log("response", response);
+      if (response.data.session) {
+        loginUser(response.data.user, response.data.session);
 
-      setToken(response.data.session?.access_token);
-      setUser(response.data.user);
-
-      // router.push("/"); // More specific redirect
+        router.push("/"); // More specific redirect
+      } else if (response.error) {
+        setError(response.error?.message);
+      }
     } catch (err) {
       console.log("error", err);
       setError(err?.message);
