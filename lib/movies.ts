@@ -135,7 +135,7 @@ export const fetchTrending = async (
 // MOVIES & SERIES - Details
 export const fetchDetails = async (
   type: MediaType,
-  id: number
+  id: string | null
 ): Promise<MediaDetails> => {
   if (!apiKey) {
     console.error("TMDB API key is not set in environment variables");
@@ -162,7 +162,7 @@ export const fetchDetails = async (
 // MOVIES & SERIES - Credits
 export const fetchCredits = async (
   type: MediaType,
-  id: number
+  id: string | null
 ): Promise<Credits> => {
   const res = await axios.get(
     `${baseUrl}/${type}/${id}/credits?api_key=${apiKey}`

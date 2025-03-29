@@ -53,15 +53,23 @@ export default function LoginPage() {
       setError("");
       setIsLoading(true);
 
-      // const response = await auth.signIn(formData.email, formData.password);
-
       const response = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
 
       if (response.data.session) {
-        loginUser(response.data.user, response.data.session);
+        // Create a Token object from the Supabase session
+        const token = {
+          accessToken: response.data.session.access_token,
+          expiresAt:
+            response.data.session.expires_at ??
+            Math.floor(Date.now() / 1000) + 3600, // Default to 1 hour from now if undefined
+          // Add any other properties required by your Token type
+        };
+
+        // Now pass the user and your custom token object
+        loginUser(response.data.user, token);
 
         router.push("/"); // More specific redirect
       } else if (response.error) {
@@ -69,7 +77,9 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.log("error", err);
-      setError(err?.message);
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
       // Handle Zod validation errors
       if (err instanceof z.ZodError) {
         const fieldErrors: typeof errors = {};

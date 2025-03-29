@@ -1,16 +1,8 @@
 "use client";
 import React, { createContext, useContext, useState } from "react";
+import { Auth, Token, User } from "./auth.type";
 
-const AuthContext = createContext<unknown>(null);
-
-type User = {
-  id: string;
-};
-
-type Token = {
-  accessToken: string;
-  expiresAt: number;
-};
+const AuthContext = createContext<Auth | null>(null);
 
 export const AuthenticationProvider: React.FC<{
   children: React.ReactNode;
@@ -88,5 +80,11 @@ export const AuthenticationProvider: React.FC<{
 };
 
 export const useAuthentication = () => {
-  return useContext(AuthContext);
+  const context: Auth | null = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("Context not defined");
+  }
+
+  return context;
 };

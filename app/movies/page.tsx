@@ -30,7 +30,13 @@ export default function Movies() {
         const res = await fetchMovies(activePage, sortBy);
 
         if (res?.results) {
-          setMovies(res.results);
+          setMovies(
+            res.results.map((movie) => ({
+              ...movie,
+              media_type: "movie",
+              vote_average: movie.vote_average || 0,
+            }))
+          );
           setActivePage(res.page);
           setTotalPages(res.total_pages);
           console.log("Total pages:", res.total_pages); // Add this line

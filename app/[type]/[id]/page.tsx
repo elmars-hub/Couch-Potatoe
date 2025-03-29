@@ -26,13 +26,8 @@ function isMovie(details: MovieDetails | TVDetails): details is MovieDetails {
   return "title" in details && "release_date" in details;
 }
 
-type Param = {
-  type: string;
-  id: string;
-};
-
 function Page() {
-  const params = useParams<Param>();
+  const params = useParams<{ id: string; type: string }>();
   const type = params ? params.type : null;
   const id = params ? params.id : null;
 
@@ -59,7 +54,7 @@ function Page() {
       }
 
       try {
-        const result = await fetchDetails(type as MediaType, parseInt(id));
+        const result = await fetchDetails(type as MediaType, id);
         setDetails(result);
         console.log("Details loaded:", result);
       } catch (err) {
@@ -87,7 +82,7 @@ function Page() {
       }
 
       try {
-        const credits = await fetchCredits(type as MediaType, parseInt(id));
+        const credits = await fetchCredits(type as MediaType, id);
         console.log("Credits loaded:", credits);
 
         if (credits && typeof credits === "object") {
@@ -158,11 +153,7 @@ function Page() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">{title}</h1>
         {isAuth && (
-          <BookmarkButton
-            mediaId={parseInt(id)}
-            mediaType={type}
-            title={title}
-          />
+          <BookmarkButton mediaId={id} mediaType={type} title={title} />
         )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

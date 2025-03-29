@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { registerSchema, RegisterFormData } from "@/lib/validations"; // Assuming you have this file
 import { useAuthentication } from "@/context/AuthenticationContext";
 import Link from "next/link";
+import { Token, User } from "@/context/auth.type";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -63,15 +64,25 @@ const RegisterPage = () => {
         },
       });
 
-      if (response.data.session) {
-        loginUser(response.data.user, response.data.session);
+      if (response.data.session && response.data.user) {
+        const user: User = response.data.user;
+        const session: Token = {
+          accessToken: response.data.session?.access_token || "",
+          expiresAt: response.data.session?.expires_at || 0,
+        };
+
+        loginUser(user, session);
 
         router.push("/"); // More specific redirect
       } else if (response.error) {
         setError(response.error?.message);
       }
     } catch (err: unknown) {
-      setError(err?.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
 
       // Handle Zod validation errors
       if (err instanceof z.ZodError) {

@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 interface BookmarkButtonProps {
-  mediaId: number;
-  mediaType: string;
+  mediaId: string | null;
+  mediaType: string | null;
   title: string;
 }
 
