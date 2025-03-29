@@ -8,7 +8,7 @@ const Auth: React.FC<{
 }> = ({ children }) => {
   const { checkAuth } = useAuthentication();
 
-  return checkAuth() ? children : redirect("/auth/login");
+  return checkAuth() ? children : redirect("/auth/register");
 };
 
 export default Auth;
