@@ -11,18 +11,28 @@ export const AuthenticationProvider: React.FC<{
   const [session, setSession] = useState<Token | null>(null);
 
   const getValue = (key: string) => {
-    const value = window.localStorage.getItem(key);
+    if (typeof window !== "undefined") {
+      const value = window.localStorage.getItem(key);
 
-    if (value) {
-      return JSON.parse(value);
+      if (value) {
+        return JSON.parse(value);
+      }
+
+      return null;
     }
-
-    return null;
   };
 
   const setValue = (key: string, value: unknown) => {
-    const json = JSON.stringify(value);
-    window.localStorage.setItem(key, json);
+    if (typeof window !== "undefined") {
+      const json = JSON.stringify(value);
+      window.localStorage.setItem(key, json);
+    }
+  };
+
+  const removeValue = (key: string) => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(key);
+    }
   };
 
   const loginUser = (user: User, token: Token) => {
@@ -41,8 +51,8 @@ export const AuthenticationProvider: React.FC<{
   };
 
   const logout = () => {
-    window.localStorage.removeItem("auth-session");
-    window.localStorage.removeItem("auth-user");
+    removeValue("auth-session");
+    removeValue("auth-user");
   };
 
   const checkAuth = () => {
