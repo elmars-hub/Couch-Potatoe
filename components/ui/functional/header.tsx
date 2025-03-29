@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Logo from "./logo";
+import { Search } from "lucide-react";
 
 export default function Header() {
   return (
@@ -13,7 +14,7 @@ export default function Header() {
           <Logo />
         </Link>
 
-        <nav className="flex items-center gap-10 h-full mt-0.5 px-3.5">
+        <nav className=" items-center gap-10 h-full mt-0.5 px-3.5 hidden sm:flex">
           <Link
             href="/"
             className="text-sm font-medium transition-colors hover:text-primary flex items-center h-full"
@@ -41,6 +42,8 @@ export default function Header() {
             Search
           </Link>
         </nav>
+
+        <Search className="sm:hidden" />
       </div>
     </header>
   );

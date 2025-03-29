@@ -139,7 +139,7 @@ function Page() {
     );
   }
 
-  const title = isMovie(details) ? details.title : details.name;
+  const title = (isMovie(details) ? details.title : details.name) as string;
   const releaseDate = isMovie(details)
     ? details.release_date
     : details.first_air_date;

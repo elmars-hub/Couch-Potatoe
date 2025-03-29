@@ -11,7 +11,7 @@ export const AuthenticationProvider: React.FC<{
   const [session, setSession] = useState<Token | null>(null);
 
   const getValue = (key: string) => {
-    const value = localStorage.getItem(key);
+    const value = window.localStorage.getItem(key);
 
     if (value) {
       return JSON.parse(value);
@@ -22,7 +22,7 @@ export const AuthenticationProvider: React.FC<{
 
   const setValue = (key: string, value: unknown) => {
     const json = JSON.stringify(value);
-    localStorage.setItem(key, json);
+    window.localStorage.setItem(key, json);
   };
 
   const loginUser = (user: User, token: Token) => {
@@ -41,8 +41,8 @@ export const AuthenticationProvider: React.FC<{
   };
 
   const logout = () => {
-    localStorage.removeItem("auth-session");
-    localStorage.removeItem("auth-user");
+    window.localStorage.removeItem("auth-session");
+    window.localStorage.removeItem("auth-user");
   };
 
   const checkAuth = () => {

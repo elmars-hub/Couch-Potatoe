@@ -12,7 +12,7 @@ interface SearchResultItem {
   name?: string;
   media_type: string;
   poster_path: string;
-  vote_average?: number;
+  vote_average: number;
   // Add other properties as needed based on your API response
 }
 
@@ -38,7 +38,13 @@ const Search = () => {
       try {
         const res = await searchData(searchValue, activePage);
         if (res?.results) {
-          setData(res.results);
+          setData(
+            res.results.map((result) => ({
+              ...result,
+              vote_average: (result as SearchResultItem).vote_average ?? 0,
+              media_type: result.media_type || "movie",
+            }))
+          );
           setTotalPages(res.total_pages);
           console.log("Search results:", res);
         } else {

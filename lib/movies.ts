@@ -25,20 +25,25 @@ export interface TrendingResult {
 }
 
 export interface MovieResult {
+  vote_average: number;
   id: number;
   title: string;
   poster_path: string;
+  first_air_date: string;
   release_date: string;
 }
 
 export interface TVResult {
   id: number;
-  name: string;
+  title: string;
+  media_type: string;
   poster_path: string;
-  first_air_date: string;
+  vote_average: number;
+  name?: string;
 }
 
 interface SearchResult {
+  vote_average: number;
   id: number;
   title?: string;
   name?: string;
@@ -74,6 +79,7 @@ export interface TVDetails extends TVResult {
   vote_average: number;
   vote_count: number;
   backdrop_path: string;
+  first_air_date: string;
   credits?: {
     cast: Array<{ id: number; name: string; character: string }>;
     crew: Array<{ id: number; name: string; job: string }>;
