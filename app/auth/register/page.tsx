@@ -6,6 +6,7 @@ import { z } from "zod";
 import { supabase } from "@/lib/supabase";
 import { registerSchema, RegisterFormData } from "@/lib/validations"; // Assuming you have this file
 import { useAuthentication } from "@/context/AuthenticationContext";
+import Link from "next/link";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -69,7 +70,7 @@ const RegisterPage = () => {
       } else if (response.error) {
         setError(response.error?.message);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       setError(err?.message);
 
       // Handle Zod validation errors
@@ -107,6 +108,7 @@ const RegisterPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
+          {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Create Your Account
           </h2>
@@ -213,12 +215,12 @@ const RegisterPage = () => {
           <div className="text-center">
             <p className="mt-2 text-sm text-gray-600">
               Already have an account?{" "}
-              <a
+              <Link
                 href="/login"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Log in
-              </a>
+              </Link>
             </p>
           </div>
         </form>

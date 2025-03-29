@@ -6,6 +6,7 @@ import { useAuthentication } from "@/context/AuthenticationContext";
 import { z } from "zod";
 import { loginSchema, LoginFormData } from "@/lib/validations"; // Assuming you have this file
 import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -188,12 +189,12 @@ export default function LoginPage() {
             </div>
 
             <div className="text-sm">
-              <a
+              <Link
                 href="/forgot-password"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Forgot your password?
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -210,12 +211,12 @@ export default function LoginPage() {
           <div className="text-center">
             <p className="mt-2 text-sm text-gray-600">
               Don&apos;t have an account?{" "}
-              <a
+              <Link
                 href="/signup"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </form>

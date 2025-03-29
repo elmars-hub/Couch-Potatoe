@@ -26,10 +26,15 @@ function isMovie(details: MovieDetails | TVDetails): details is MovieDetails {
   return "title" in details && "release_date" in details;
 }
 
+type Param = {
+  type: string;
+  id: string;
+};
+
 function Page() {
-  const params = useParams();
-  const type = params.type as string;
-  const id = params.id as string;
+  const params = useParams<Param>();
+  const type = params ? params.type : null;
+  const id = params ? params.id : null;
 
   const [details, setDetails] = useState<MovieDetails | TVDetails | null>(null);
   const [cast, setCast] = useState<Cast[]>([]);

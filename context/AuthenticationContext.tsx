@@ -3,21 +3,45 @@ import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext<unknown>(null);
 
+type User = {
+  id: string;
+};
+
+type Token = {
+  accessToken: string;
+  expiresAt: number;
+};
+
 export const AuthenticationProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [session, setSession] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Token | null>(null);
 
-  const loginUser = (user, token) => {
-    setSession(token);
-    setUser(user);
-    localStorage.setItem("auth-session", JSON.stringify(token));
-    localStorage.setItem("auth-user", JSON.stringify(user));
+  const getValue = (key: string) => {
+    const value = localStorage.getItem(key);
+
+    if (value) {
+      return JSON.parse(value);
+    }
+
+    return null;
   };
 
-  const getUser = () => {
-    const userData = user ?? localStorage.getItem("auth-user");
+  const setValue = (key: string, value: unknown) => {
+    const json = JSON.stringify(value);
+    localStorage.setItem(key, json);
+  };
+
+  const loginUser = (user: User, token: Token) => {
+    setSession(token);
+    setUser(user);
+    setValue("auth-session", token);
+    setValue("auth-user", user);
+  };
+
+  const getUser = (): User | null => {
+    const userData = user ?? getValue("auth-user");
 
     const authenticated = checkAuth();
 
@@ -30,7 +54,8 @@ export const AuthenticationProvider: React.FC<{
   };
 
   const checkAuth = () => {
-    const sessionData = session ?? localStorage.getItem("auth-session");
+    const authSession = getValue("auth-session");
+    const sessionData = session ?? authSession;
     const now = Math.round(Date.now() / 1000);
 
     if (!sessionData) {
@@ -52,6 +77,7 @@ export const AuthenticationProvider: React.FC<{
         user,
         logout,
         session,
+        getUser,
         checkAuth,
         loginUser,
       }}
