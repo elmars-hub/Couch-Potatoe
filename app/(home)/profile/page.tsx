@@ -10,17 +10,9 @@ import Footer from "@/components/ui/functional/footer";
 const ProfilePage = () => {
   const { getUser } = useAuthentication();
 
-  // Function to get the display name
-  const getDisplayInfo = () => {
-    const user = getUser(); // Get the user object once
-
-    return {
-      displayName: user?.user_metadata?.displayName || "User",
-      email: user?.email || "No email",
-    };
-  };
-
-  const { displayName, email } = getDisplayInfo();
+  const user = getUser();
+  const username = user?.displayName ?? "User";
+  const email = user?.email ?? "User";
 
   const getInitials = (name: string) => {
     const nameParts = name.split(" ");
@@ -29,7 +21,7 @@ const ProfilePage = () => {
     return `${firstInitial}${secondInitial}`.toUpperCase();
   };
 
-  const initials = getInitials(displayName);
+  const initials = getInitials(username);
 
   return (
     <>
@@ -43,7 +35,7 @@ const ProfilePage = () => {
             <CardContent className="space-y-6">
               <div className="flex flex-col items-center space-y-4">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={displayName} alt="Profile picture" />
+                  <AvatarImage src={username} alt="Profile picture" />
                   <AvatarFallback className="text-3xl">
                     {initials}
                   </AvatarFallback>
@@ -51,7 +43,7 @@ const ProfilePage = () => {
 
                 <div className="text-center space-y-2">
                   <>
-                    <h2 className="text-xl font-semibold">{displayName}</h2>
+                    <h2 className="text-xl font-semibold">{username}</h2>
                     <p className="text-muted-foreground">{email}</p>
                   </>
                 </div>

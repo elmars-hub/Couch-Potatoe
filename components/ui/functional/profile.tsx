@@ -17,11 +17,8 @@ import { LogoutConfirmation } from "./logout";
 
 export default function ProfileTag() {
   const { checkAuth, getUser } = useAuthentication();
-
-  // Function to get the display name
-  const getUsername = () => {
-    return getUser()?.user_metadata?.displayName || "User";
-  };
+  const user = getUser();
+  const username = user?.displayName ?? "User";
 
   // Function to get initials
   const getInitials = (name: string) => {
@@ -31,7 +28,6 @@ export default function ProfileTag() {
     return `${firstInitial}${secondInitial}`.toUpperCase(); // Convert to uppercase
   };
 
-  const username = getUsername();
   const initials = getInitials(username);
 
   return (
