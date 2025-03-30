@@ -10,7 +10,7 @@ const Logo = () => {
         height={30}
         className="sm:hidden md:flex"
       />
-      <span className="text-red-600 uppercase font-bold text-2xl leading-7 sm:text-base md:text-2xl md:flex">
+      <span className="text-red-600 uppercase font-bold text-lg leading-7 sm:text-base md:text-2xl md:flex">
         Couch Potato
       </span>
     </div>
