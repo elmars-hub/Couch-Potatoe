@@ -16,9 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="relative isolate w-full min-h-screen flex flex-col">
+      <body className="relative isolate w-full min-h-screen flex flex-col ">
         <AuthenticationProvider>
-          <main className="grow container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+          <main className="grow container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 sm:pb-0">
             {children}
           </main>
         </AuthenticationProvider>

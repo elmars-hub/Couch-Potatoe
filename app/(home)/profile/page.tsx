@@ -10,9 +10,16 @@ const ProfilePage = () => {
   const { getUser } = useAuthentication();
 
   // Function to get the display name
-  const getUsername = () => {
-    return getUser()?.user_metadata?.displayName || "User";
+  const getDisplayInfo = () => {
+    const user = getUser(); // Get the user object once
+
+    return {
+      displayName: user?.user_metadata?.displayName || "User",
+      email: user?.email || "No email",
+    };
   };
+
+  const { displayName, email } = getDisplayInfo();
 
   const getInitials = (name: string) => {
     const nameParts = name.split(" ");
@@ -21,13 +28,12 @@ const ProfilePage = () => {
     return `${firstInitial}${secondInitial}`.toUpperCase(); // Convert to uppercase
   };
 
-  const username = getUsername();
-  const initials = getInitials(username);
+  const initials = getInitials(displayName);
 
   return (
     <Auth>
       <div className="min-h-screen flex justify-center p-6 pt-10">
-        <Card className="w-full max-w-md shadow-lg h-80">
+        <Card className="w-full max-w-md shadow-lg h-96">
           <CardHeader className="items-center">
             <CardTitle className="text-2xl">Your Profile</CardTitle>
           </CardHeader>
@@ -35,14 +41,14 @@ const ProfilePage = () => {
           <CardContent className="space-y-6">
             <div className="flex flex-col items-center space-y-4">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={username} alt="Profile picture" />
+                <AvatarImage src={displayName} alt="Profile picture" />
                 <AvatarFallback className="text-3xl">{initials}</AvatarFallback>
               </Avatar>
 
               <div className="text-center space-y-2">
                 <>
-                  <h2 className="text-xl font-semibold">{username}</h2>
-                  {/* <p className="text-muted-foreground">{user?.email}</p> */}
+                  <h2 className="text-xl font-semibold">{displayName}</h2>
+                  <p className="text-muted-foreground">{email}</p>
                 </>
               </div>
             </div>
