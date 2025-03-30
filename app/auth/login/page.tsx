@@ -71,7 +71,7 @@ export default function LoginPage() {
         // Now pass the user and your custom token object
         loginUser(response.data.user, token);
 
-        router.push("/"); // More specific redirect
+        router.push("/home"); // More specific redirect
       } else if (response.error) {
         setError(response.error?.message);
       }

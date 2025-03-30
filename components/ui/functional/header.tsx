@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Logo from "./logo";
 import { Search } from "lucide-react";
+import ProfileTag from "./profile";
 
 export default function Header() {
   return (
@@ -41,6 +42,8 @@ export default function Header() {
           >
             Search
           </Link>
+
+          <ProfileTag />
         </nav>
 
         <Search className="sm:hidden" />

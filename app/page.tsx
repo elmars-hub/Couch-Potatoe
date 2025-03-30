@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import MovieCard from "@/components/ui/functional/movie-card";
 import { Button } from "@/components/ui/button";
 import MovieCardSkeleton from "@/components/ui/functional/movie-card-skeleton";
+import Header from "@/components/ui/functional/header";
 
 export default function Home() {
   // const [displayName, setDisplayName] = useState("");
@@ -56,6 +57,7 @@ export default function Home() {
 
   return (
     <>
+      <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-baseline gap-4 mb-10">
           <h2 className="text-xl font-semibold uppercase text-card-foreground">
