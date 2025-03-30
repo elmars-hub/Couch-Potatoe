@@ -64,16 +64,35 @@ const RegisterPage = () => {
         },
       });
 
+      // Convert the Supabase user to your custom type with proper type safety
       if (response.data.session && response.data.user) {
-        const user: User = response.data.user;
-        const session: Token = {
-          accessToken: response.data.session?.access_token || "",
-          expiresAt: response.data.session?.expires_at || 0,
+        const supabaseUser = response.data.user;
+
+        const customUser: User = {
+          id: supabaseUser.id,
+          email: supabaseUser.email,
+          role: supabaseUser.role || "user", // Provide fallback
+          displayName: supabaseUser.user_metadata?.displayName || "",
+          created_at: "",
+          updated_at: "",
+          user_metadata: {
+            displayName: undefined,
+            email: undefined,
+            email_verified: undefined,
+            phone_verified: undefined,
+            sub: undefined,
+          },
         };
 
-        loginUser(user, session);
+        const session: Token = {
+          accessToken: response.data.session.access_token,
+          expiresAt:
+            response.data.session.expires_at ||
+            Math.floor(Date.now() / 1000) + 3600,
+        };
 
-        router.push("/"); // More specific redirect
+        loginUser(customUser, session);
+        router.push("/");
       } else if (response.error) {
         setError(response.error?.message);
       }

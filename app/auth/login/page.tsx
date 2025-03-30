@@ -7,6 +7,7 @@ import { z } from "zod";
 import { loginSchema, LoginFormData } from "@/lib/validations"; // Assuming you have this file
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { User } from "@/context/auth.type";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -69,9 +70,9 @@ export default function LoginPage() {
         };
 
         // Now pass the user and your custom token object
-        loginUser(response.data.user, token);
+        loginUser(response.data.user as User, token);
 
-        router.push("/home"); // More specific redirect
+        router.push("/"); // More specific redirect
       } else if (response.error) {
         setError(response.error?.message);
       }

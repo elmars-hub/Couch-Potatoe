@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Logo from "./logo";
-import { Search } from "lucide-react";
 import ProfileTag from "./profile";
 
 export default function Header() {
@@ -15,38 +14,36 @@ export default function Header() {
           <Logo />
         </Link>
 
-        <nav className=" items-center gap-10 h-full mt-0.5 px-3.5 hidden sm:flex">
+        <nav className="flex items-center gap-10 h-full mt-0.5 px-3.5 ">
           <Link
             href="/"
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center h-full"
+            className="hidden sm:flex text-sm font-medium transition-colors hover:text-primary  items-center h-full"
           >
             Home
           </Link>
 
           <Link
             href="/movies"
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center h-full"
+            className="hidden sm:flex text-sm font-medium transition-colors hover:text-primary items-center h-full"
           >
             Movies
           </Link>
           <Link
             href="/shows"
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center h-full"
+            className="hidden sm:flex text-sm font-medium transition-colors hover:text-primary items-center h-full"
           >
             Shows
           </Link>
 
           <Link
             href="/search"
-            className="text-sm font-medium transition-colors hover:text-primary flex items-center h-full"
+            className="hidden sm:flex text-sm font-medium transition-colors hover:text-primary items-center h-full"
           >
             Search
           </Link>
 
           <ProfileTag />
         </nav>
-
-        <Search className="sm:hidden" />
       </div>
     </header>
   );

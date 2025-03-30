@@ -4,6 +4,7 @@ export type User = {
   role: string;
   created_at: string;
   updated_at: string;
+  displayName?: string;
   user_metadata: {
     displayName?: string;
     email?: string;

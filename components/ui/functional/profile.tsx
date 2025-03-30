@@ -91,7 +91,7 @@ export default function ProfileTag() {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Button asChild>
+        <Button asChild className="">
           <Link href="/auth/register">Sign In</Link>
         </Button>
       )}
