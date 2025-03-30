@@ -4,10 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { supabase } from "@/lib/supabase";
-import { registerSchema, RegisterFormData } from "@/lib/validations"; // Assuming you have this file
+import { registerSchema, RegisterFormData } from "@/lib/validations";
 import { useAuthentication } from "@/context/AuthenticationContext";
 import Link from "next/link";
 import { Token, User } from "@/context/auth.type";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -59,8 +64,8 @@ const RegisterPage = () => {
         email: formData.email,
         password: formData.password,
         options: {
-          data: { displayName: formData.displayName }, // Save display name in user metadata
-          emailRedirectTo: `${window.location.origin}/auth/callback`, // Add redirect URL for email verification
+          data: { displayName: formData.displayName },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
@@ -71,7 +76,7 @@ const RegisterPage = () => {
         const customUser: User = {
           id: supabaseUser.id,
           email: supabaseUser.email,
-          role: supabaseUser.role || "user", // Provide fallback
+          role: supabaseUser.role || "user",
           displayName: supabaseUser.user_metadata?.displayName || "",
           created_at: "",
           updated_at: "",
@@ -135,126 +140,103 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create Your Account
-          </h2>
-        </div>
-        <form onSubmit={handleRegister} className="mt-8 space-y-6" noValidate>
-          <div className="rounded-md shadow-sm space-y-4">
-            {/* Display Name Input */}
-            <div>
-              <label htmlFor="displayName" className="sr-only">
-                Display Name
-              </label>
-              <input
-                id="displayName"
-                name="displayName"
-                type="text"
-                autoComplete="name"
-                className={`appearance-none relative block w-full px-3 py-2 border rounded-t-md focus:outline-none sm:text-sm 
-                  ${
-                    errors.displayName
-                      ? "border-red-500 text-red-900 placeholder-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 placeholder-gray-500 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500"
-                  }`}
-                placeholder="Display Name"
-                value={formData.displayName}
-                onChange={handleInputChange}
-              />
-              {errors.displayName && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.displayName}
-                </p>
-              )}
-            </div>
+    <div className="h-[100vh] w-full flex  justify-center px-6">
+      <Card className="w-full max-w-md shadow-lg h-96">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl text-center font-bold">
+            Create Account
+          </CardTitle>
+        </CardHeader>
 
-            {/* Email Input */}
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                className={`appearance-none relative block w-full px-3 py-2 border focus:outline-none sm:text-sm 
-                  ${
-                    errors.email
-                      ? "border-red-500 text-red-900 placeholder-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 placeholder-gray-500 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500"
-                  }`}
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Password Input */}
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                className={`appearance-none relative block w-full px-3 py-2 border rounded-b-md focus:outline-none sm:text-sm 
-                  ${
-                    errors.password
-                      ? "border-red-500 text-red-900 placeholder-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 placeholder-gray-500 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500"
-                  }`}
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Form-level Error */}
-          {errors.form && (
-            <div className="text-red-500 text-sm text-center">
-              {errors.form}
-            </div>
+        <CardContent className="grid gap-4">
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Registering..." : "Register"}
-            </button>
-          </div>
+          <form onSubmit={handleRegister} className="space-y-4" noValidate>
+            <div className="space-y-2">
+              {/* Display Name */}
+              <div className="space-y-1">
+                <Label htmlFor="displayName">Display Name</Label>
+                <Input
+                  id="displayName"
+                  name="displayName"
+                  placeholder="John Doe"
+                  value={formData.displayName}
+                  onChange={handleInputChange}
+                  className={errors.displayName ? "border-red-500" : ""}
+                />
+                {errors.displayName && (
+                  <p className="text-xs text-red-500">{errors.displayName}</p>
+                )}
+              </div>
 
-          {/* Login Link */}
-          <div className="text-center">
-            <p className="mt-2 text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link
-                href="/auth/login"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Log in
-              </Link>
-            </p>
+              {/* Email */}
+              <div className="space-y-1">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={errors.email ? "border-red-500" : ""}
+                />
+                {errors.email && (
+                  <p className="text-xs text-red-500">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Password */}
+              <div className="space-y-1">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={errors.password ? "border-red-500" : ""}
+                />
+                {errors.password && (
+                  <p className="text-xs text-red-500">{errors.password}</p>
+                )}
+              </div>
+            </div>
+
+            {errors.form && (
+              <Alert variant="destructive">
+                <AlertDescription>{errors.form}</AlertDescription>
+              </Alert>
+            )}
+
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin" />
+                  Creating account...
+                </div>
+              ) : (
+                "Create Account"
+              )}
+            </Button>
+          </form>
+
+          <div className="text-center text-sm">
+            Already have an account?{" "}
+            <Link
+              href="/auth/login"
+              className="underline text-primary hover:text-primary/80"
+            >
+              Sign in
+            </Link>
           </div>
-          {error && <p className="mt-1 text-sm text-red-600 hidden">{error}</p>}
-        </form>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

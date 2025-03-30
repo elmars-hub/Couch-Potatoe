@@ -4,10 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthentication } from "@/context/AuthenticationContext";
 import { z } from "zod";
-import { loginSchema, LoginFormData } from "@/lib/validations"; // Assuming you have this file
+import { loginSchema, LoginFormData } from "@/lib/validations";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { User } from "@/context/auth.type";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -21,23 +27,29 @@ export default function LoginPage() {
   }>({});
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const router = useRouter();
   const { loginUser } = useAuthentication();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev: LoginFormData) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, type, checked } = e.target;
 
-    // Clear specific field error when user starts typing
-    if (errors[name as keyof typeof errors]) {
-      setErrors((prev) => ({
+    if (type === "checkbox") {
+      setRememberMe(checked);
+    } else {
+      setFormData((prev: LoginFormData) => ({
         ...prev,
-        [name]: undefined,
+        [name]: value,
       }));
+
+      // Clear specific field error when user starts typing
+      if (errors[name as keyof typeof errors]) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: undefined,
+        }));
+      }
     }
   };
 
@@ -66,7 +78,6 @@ export default function LoginPage() {
           expiresAt:
             response.data.session.expires_at ??
             Math.floor(Date.now() / 1000) + 3600, // Default to 1 hour from now if undefined
-          // Add any other properties required by your Token type
         };
 
         // Now pass the user and your custom token object
@@ -118,120 +129,107 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
+    <div className="h-[100vh] w-full flex  justify-center px-6">
+      <Card className="w-full max-w-md shadow-lg h-96">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl text-center font-bold">
+            Welcome Back
+          </CardTitle>
+        </CardHeader>
 
-          {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                className={`appearance-none relative block w-full px-3 py-2 border rounded-md focus:outline-none sm:text-sm 
-                  ${
-                    errors.email
-                      ? "border-red-500 text-red-900 placeholder-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 placeholder-gray-500 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500"
-                  }`}
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                className={`appearance-none relative block w-full px-3 py-2 border rounded-md focus:outline-none sm:text-sm 
-                  ${
-                    errors.password
-                      ? "border-red-500 text-red-900 placeholder-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300 placeholder-gray-500 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500"
-                  }`}
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
-            </div>
-          </div>
-
-          {errors.form && (
-            <div className="text-red-500 text-sm text-center">
-              {errors.form}
-            </div>
+        <CardContent className="grid gap-4">
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <div className="space-y-2">
+              {/* Email Input */}
+              <div className="space-y-1">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={errors.email ? "border-red-500" : ""}
+                />
+                {errors.email && (
+                  <p className="text-xs text-red-500">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Password Input */}
+              <div className="space-y-1">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={errors.password ? "border-red-500" : ""}
+                />
+                {errors.password && (
+                  <p className="text-xs text-red-500">{errors.password}</p>
+                )}
+              </div>
             </div>
 
-            <div className="text-sm">
+            {errors.form && (
+              <Alert variant="destructive">
+                <AlertDescription>{errors.form}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="remember-me"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(!!checked)}
+                />
+                <Label htmlFor="remember-me" className="text-sm">
+                  Remember me
+                </Label>
+              </div>
+
               <Link
                 href="/forgot-password"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
+                className="text-sm text-primary hover:text-primary/80"
               >
-                Forgot your password?
+                Forgot password?
               </Link>
             </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 border-2 border-t-transparent border-white rounded-full animate-spin" />
+                  Signing in...
+                </div>
+              ) : (
+                "Sign In"
+              )}
+            </Button>
+          </form>
+
+          <div className="text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/auth/register"
+              className="underline text-primary hover:text-primary/80"
             >
-              {isLoading ? "Signing in..." : "Sign in"}
-            </button>
+              Sign up
+            </Link>
           </div>
-
-          <div className="text-center">
-            <p className="mt-2 text-sm text-gray-600">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/auth/register"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Sign up
-              </Link>
-            </p>
-          </div>
-        </form>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
 import { Bookmark, Heart, Library, User } from "lucide-react";
 import { Button } from "../button";
 import { useAuthentication } from "@/context/AuthenticationContext";
+import { LogoutConfirmation } from "./logout";
 
 export default function ProfileTag() {
   const { checkAuth, getUser } = useAuthentication();
@@ -40,7 +41,11 @@ export default function ProfileTag() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="" alt={username} />
+                <AvatarImage
+                  src=""
+                  alt={username}
+                  className="bg-red-500 text-white"
+                />
                 <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
             </Button>
@@ -87,7 +92,7 @@ export default function ProfileTag() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            {/* <LogoutConfirmation /> */}
+            <LogoutConfirmation />
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
