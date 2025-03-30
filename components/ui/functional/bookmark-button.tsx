@@ -1,39 +1,96 @@
-"use client";
+// // components/BookmarkButton.tsx
+// "use client";
 
-import { useState } from "react";
+// import { useState, useEffect } from "react";
+// import { supabase } from "@/lib/supabase";
+// import { useAuthentication } from "@/context/AuthenticationContext";
+// import { Bookmark, BookmarkCheck, Loader2 } from "lucide-react";
+// import { Button } from "@/components/ui/button";
 
-interface BookmarkButtonProps {
-  mediaId: string | null;
-  mediaType: string | null;
-  title: string;
-}
+// interface BookmarkButtonProps {
+//   mediaId: string;
+//   mediaType: "movie" | "tv";
+//   title: string;
+//   className?: string;
+// }
 
-export default function BookmarkButton({ title }: BookmarkButtonProps) {
-  const [isBookmarked, setIsBookmarked] = useState(false);
+// export const BookmarkButton = ({
+//   mediaId,
+//   mediaType,
+//   title,
+// }: BookmarkButtonProps) => {
+//   const { user } = useAuthentication();
+//   const [isBookmarked, setIsBookmarked] = useState(false);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
 
-  const toggleBookmark = () => {
-    // Here you would typically integrate with your bookmark storage solution
-    setIsBookmarked(!isBookmarked);
+//   useEffect(() => {
+//     const checkBookmark = async () => {
+//       if (!user) return;
 
-    if (!isBookmarked) {
-      // Add to bookmarks
-      console.log(`Bookmarked: ${title}`);
-    } else {
-      // Remove from bookmarks
-      console.log(`Removed bookmark: ${title}`);
-    }
-  };
+//       try {
+//         const { data, error } = await supabase
+//           .from("bookmarks")
+//           .select("*")
+//           .eq("user_id", user.id)
+//           .eq("media_id", mediaId)
+//           .single();
 
-  return (
-    <button
-      onClick={toggleBookmark}
-      className={`px-4 py-2 rounded-full transition-colors ${
-        isBookmarked
-          ? "bg-red-500 text-white"
-          : "bg-gray-200 hover:bg-gray-300 text-gray-800"
-      }`}
-    >
-      {isBookmarked ? "Bookmarked" : "Bookmark"}
-    </button>
-  );
-}
+//         setIsBookmarked(!!data);
+//       } catch (err) {
+//         setError("Failed to check bookmark status");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     checkBookmark();
+//   }, [user, mediaId]);
+
+//   const toggleBookmark = async () => {
+//     if (!user) return;
+
+//     try {
+//       setLoading(true);
+//       if (isBookmarked) {
+//         await supabase
+//           .from("bookmarks")
+//           .delete()
+//           .eq("user_id", user.id)
+//           .eq("media_id", mediaId);
+//       } else {
+//         await supabase.from("bookmarks").insert({
+//           user_id: user.id,
+//           media_id: mediaId,
+//           media_type: mediaType,
+//           title: title,
+//         });
+//       }
+//       setIsBookmarked(!isBookmarked);
+//     } catch (err) {
+//       setError("Failed to update bookmark");
+//       console.error(err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   if (loading) return <Loader2 className="h-5 w-5 animate-spin" />;
+//   if (error) return <div className="text-red-500 text-sm">{error}</div>;
+
+//   return (
+//     <Button
+//       variant="ghost"
+//       size="icon"
+//       onClick={toggleBookmark}
+//       disabled={loading}
+//       aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+//     >
+//       {isBookmarked ? (
+//         <BookmarkCheck className="h-5 w-5 text-blue-500 fill-blue-500" />
+//       ) : (
+//         <Bookmark className="h-5 w-5 text-gray-500" />
+//       )}
+//     </Button>
+//   );
+// };

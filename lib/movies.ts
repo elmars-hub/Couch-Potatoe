@@ -127,16 +127,31 @@ interface Videos {
   results: Video[];
 }
 
-// Trending
+// In your movies.ts file
 export const fetchTrending = async (
-  timeWindow: TimeWindow = "day"
-): Promise<TrendingResult[]> => {
+  timeWindow: TimeWindow = "day",
+  page: number = 1
+): Promise<{ results: TrendingResult[]; total_pages: number }> => {
   const { data } = await axios.get(
-    `${baseUrl}/trending/all/${timeWindow}?api_key=${apiKey}`
+    `${baseUrl}/trending/all/${timeWindow}?api_key=${apiKey}&page=${page}`
   );
 
-  return data?.results;
+  return {
+    results: data.results,
+    total_pages: data.total_pages,
+  };
 };
+
+// Trending
+// export const fetchTrending = async (
+//   timeWindow: TimeWindow = "day"
+// ): Promise<TrendingResult[]> => {
+//   const { data } = await axios.get(
+//     `${baseUrl}/trending/all/${timeWindow}?api_key=${apiKey}`
+//   );
+
+//   return data?.results;
+// };
 
 // MOVIES & SERIES - Details
 export const fetchDetails = async (

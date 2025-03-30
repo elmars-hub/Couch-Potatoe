@@ -13,10 +13,11 @@ import {
   Crew,
 } from "@/lib/movies";
 import CreditsSection from "@/components/ui/functional/credits-section";
-import BookmarkButton from "@/components/ui/functional/bookmark-button";
 import { useAuthentication } from "@/context/AuthenticationContext";
 import Auth from "@/middleware/Auth";
 import BackButton from "@/components/ui/functional/back";
+// import {FavoriteButton} from "@/components/ui/functional/favourite-button";
+// import {BookmarkButton} from "@/components/ui/functional/bookmark-button";
 
 interface Genre {
   id: number;
@@ -156,7 +157,20 @@ function Page() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">{title}</h1>
         {isAuth && (
-          <BookmarkButton mediaId={id} mediaType={type} title={title} />
+          <div className="flex gap-2">
+            {/* <FavoriteButton
+              mediaId={id}
+              mediaType={type}
+              title={title}
+              className="p-2 hover:bg-red-100 rounded-full"
+            /> */}
+            {/* <BookmarkButton
+              mediaId={id}
+              mediaType={type}
+              title={title}
+              className="p-2 hover:bg-blue-100 rounded-full"
+            /> */}
+          </div>
         )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

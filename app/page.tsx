@@ -1,5 +1,4 @@
 "use client";
-
 import {
   fetchTrending,
   type TrendingResult,
@@ -7,77 +6,96 @@ import {
 } from "@/lib/movies";
 import { useEffect, useState } from "react";
 import MovieCard from "@/components/ui/functional/movie-card";
-import { Button } from "@/components/ui/button";
 import MovieCardSkeleton from "@/components/ui/functional/movie-card-skeleton";
 import Header from "@/components/ui/functional/header";
+import PaginationComponent from "@/components/ui/functional/paginationcomponent";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import Footer from "@/components/ui/functional/footer";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Home() {
-  // const [displayName, setDisplayName] = useState("");
-  // const router = useRouter();
   const [data, setData] = useState<TrendingResult[]>([]);
   const [timeWindow, setTimeWindow] = useState<TimeWindow>("day");
   const [loading, setLoading] = useState(true);
+  const [activePage, setActivePage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    setLoading(true);
-    fetchTrending(timeWindow)
-      .then((res) => {
-        setData(res);
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetchTrending(timeWindow, activePage);
+        setData(response.results);
+        setTotalPages(response.total_pages);
+      } catch (err) {
+        console.error("Error fetching trending data:", err);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err, "err");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [timeWindow]);
+      }
+    };
 
-  console.log(data, "data");
-
-  // // Redirect to login if user is not authenticated
-  // useEffect(() => {
-  //   if (!user) {
-  //     router.push("/auth/login");
-  //   }
-  // }, [user, router]);
-
-  // Fetch display name only if the user is authenticated
-  // useEffect(() => {
-  //   if (user) {
-  //     const fetchDisplayName = async () => {
-  //       const name = await getUserDisplayName();
-  //       setDisplayName(name);
-  //     };
-  //     fetchDisplayName();
-  //   }
-  // }, [user, getUserDisplayName]);
-
-  // if (!user) return null;
+    loadData();
+  }, [timeWindow, activePage]);
 
   return (
     <>
       <Header />
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-baseline gap-4 mb-10">
-          <h2 className="text-xl font-semibold uppercase text-card-foreground">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+          <h2 className="text-xl font-semibold uppercase text-card-foreground shrink-0">
             Trending
           </h2>
-          <div className="flex items-center gap-2 border border-teal-500 rounded-full">
-            <Button
-              variant={timeWindow === "day" ? "secondary" : "ghost"}
-              className="rounded-full px-3 py-1"
-              onClick={() => setTimeWindow("day")}
+
+          {/* Desktop Tabs Container */}
+          <div className="hidden md:block">
+            <Tabs
+              value={timeWindow}
+              onValueChange={(value) => {
+                setTimeWindow(value as TimeWindow);
+                setActivePage(1);
+              }}
             >
-              Today
-            </Button>
-            <Button
-              variant={timeWindow === "week" ? "secondary" : "ghost"}
-              className="rounded-full px-3 py-1"
-              onClick={() => setTimeWindow("week")}
+              <TabsList className="border border-teal-500 rounded-full p-1 h-auto">
+                <TabsTrigger
+                  value="day"
+                  className="rounded-full px-4 py-1 data-[state=active]:bg-secondary hover:bg-secondary/50"
+                >
+                  Today
+                </TabsTrigger>
+                <TabsTrigger
+                  value="week"
+                  className="rounded-full px-4 py-1 data-[state=active]:bg-secondary hover:bg-secondary/50"
+                >
+                  This Week
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {/* Mobile Select Container */}
+          <div className="w-full md:hidden">
+            <Select
+              value={timeWindow}
+              onValueChange={(value) => {
+                setTimeWindow(value as TimeWindow);
+                setActivePage(1);
+              }}
             >
-              This Week
-            </Button>
+              <SelectTrigger className="w-full border-teal-500">
+                <SelectValue placeholder="Select timeframe" />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <SelectItem value="day">Today</SelectItem>
+                <SelectItem value="week">This Week</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -90,9 +108,17 @@ export default function Home() {
                 <MovieCard key={item.id} item={item} type={item.media_type} />
               ))}
         </div>
+
+        {!loading && totalPages > 1 && (
+          <PaginationComponent
+            activePage={activePage}
+            totalPages={totalPages}
+            setActivePage={setActivePage}
+          />
+        )}
       </div>
 
-      {/* {loading && <div>Loading...</div>} */}
+      <Footer />
     </>
   );
 }

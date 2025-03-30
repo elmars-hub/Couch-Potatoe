@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../dropdown-menu";
-import { Bookmark, Heart, Library, User } from "lucide-react";
+import { Bookmark, Heart, User } from "lucide-react";
 import { Button } from "../button";
 import { useAuthentication } from "@/context/AuthenticationContext";
 import { LogoutConfirmation } from "./logout";
@@ -64,7 +64,7 @@ export default function ProfileTag() {
                 <span>Profile</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            {/* <DropdownMenuItem asChild>
               <Link
                 href="/library"
                 className="cursor-pointer w-full flex items-center"
@@ -72,10 +72,10 @@ export default function ProfileTag() {
                 <Library className="mr-2 h-4 w-4" />
                 <span>Library</span>
               </Link>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem asChild>
               <Link
-                href="/bookmarks"
+                href="/bookmark"
                 className="cursor-pointer w-full flex items-center"
               >
                 <Bookmark className="mr-2 h-4 w-4" />
@@ -84,7 +84,7 @@ export default function ProfileTag() {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link
-                href="/favorites"
+                href="/favourite"
                 className="cursor-pointer w-full flex items-center"
               >
                 <Heart className="mr-2 h-4 w-4" />
@@ -97,7 +97,7 @@ export default function ProfileTag() {
         </DropdownMenu>
       ) : (
         <Button asChild className="">
-          <Link href="/auth/register">Sign In</Link>
+          <Link href="/auth/login">Sign In</Link>
         </Button>
       )}
     </>

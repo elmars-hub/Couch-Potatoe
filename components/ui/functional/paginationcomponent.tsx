@@ -1,4 +1,10 @@
-import React from "react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 
 interface PaginationComponentProps {
   activePage: number;
@@ -12,42 +18,40 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
   setActivePage,
 }) => {
   return (
-    <div className="flex gap-2 items-center">
-      <div className="flex gap-2 max-w-[250px] my-10">
-        <button
-          className={`
-            px-4 py-2 rounded border 
-            ${
-              activePage === 1
-                ? "bg-gray-200 cursor-not-allowed text-gray-500"
-                : "bg-white hover:bg-gray-100 text-black"
-            }
-          `}
-          onClick={() => setActivePage(activePage - 1)}
-          disabled={activePage === 1}
-        >
-          Prev
-        </button>
-        <button
-          className={`
-            px-4 py-2 rounded border 
-            ${
-              activePage === totalPages
-                ? "bg-gray-200 cursor-not-allowed text-gray-500"
-                : "bg-white hover:bg-gray-100 text-black"
-            }
-          `}
-          onClick={() => setActivePage(activePage + 1)}
-          disabled={activePage === totalPages}
-        >
-          Next
-        </button>
-      </div>
-      <div className="flex gap-1">
-        <span>{activePage}</span>
-        <span>of</span>
-        <span>{totalPages}</span>
-      </div>
+    <div className="flex items-center justify-between my-10">
+      <Pagination>
+        <PaginationContent className="gap-4">
+          <PaginationItem>
+            <PaginationPrevious
+              className={
+                activePage === 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer"
+              }
+              onClick={() => activePage > 1 && setActivePage(activePage - 1)}
+              aria-disabled={activePage === 1}
+            />
+          </PaginationItem>
+
+          <div className="text-sm text-muted-foreground">
+            Page {activePage} of {totalPages}
+          </div>
+
+          <PaginationItem>
+            <PaginationNext
+              className={
+                activePage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer"
+              }
+              onClick={() =>
+                activePage < totalPages && setActivePage(activePage + 1)
+              }
+              aria-disabled={activePage === totalPages}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 };

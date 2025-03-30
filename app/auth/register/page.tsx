@@ -149,12 +149,6 @@ const RegisterPage = () => {
         </CardHeader>
 
         <CardContent className="grid gap-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
           <form onSubmit={handleRegister} className="space-y-4" noValidate>
             <div className="space-y-2">
               {/* Display Name */}
@@ -236,6 +230,11 @@ const RegisterPage = () => {
             </Link>
           </div>
         </CardContent>
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </Card>
     </div>
   );

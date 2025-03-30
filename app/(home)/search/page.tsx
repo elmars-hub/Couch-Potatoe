@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { searchData } from "@/lib/movies";
 import MovieCard from "@/components/ui/functional/movie-card";
 import PaginationComponent from "@/components/ui/functional/paginationcomponent";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { SearchIcon, Loader2 } from "lucide-react";
 
-// Define an interface for the search result items
 interface SearchResultItem {
   id: number;
   title?: string;
@@ -13,7 +15,6 @@ interface SearchResultItem {
   media_type: string;
   poster_path: string;
   vote_average: number;
-  // Add other properties as needed based on your API response
 }
 
 const Search = () => {
@@ -41,12 +42,11 @@ const Search = () => {
           setData(
             res.results.map((result) => ({
               ...result,
-              vote_average: (result as SearchResultItem).vote_average ?? 0,
+              vote_average: result.vote_average ?? 0,
               media_type: result.media_type || "movie",
             }))
           );
           setTotalPages(res.total_pages);
-          console.log("Search results:", res);
         } else {
           setData([]);
           setError("No results found");
@@ -72,41 +72,58 @@ const Search = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex items-baseline gap-4 my-2">
-        <h2 className="text-md uppercase font-semibold">Search</h2>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Search Movies & TV Shows</h1>
 
-      <form onSubmit={handleSearch} className="mb-6">
-        <input
-          type="text"
-          placeholder="Search movies, tv shows..."
-          className="w-full px-4 py-2 border rounded-md 
-            text-gray-700 placeholder-gray-400 
-            focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={tempSearchValue}
-          onChange={(e) => setTempSearchValue(e.target.value)}
-        />
-      </form>
+        <form onSubmit={handleSearch} className="flex gap-2 max-w-2xl">
+          <div className="relative flex-1">
+            <Input
+              placeholder="Search movies, TV shows..."
+              className="pl-10 pr-4 py-2 h-12 text-lg"
+              value={tempSearchValue}
+              onChange={(e) => setTempSearchValue(e.target.value)}
+            />
+            <SearchIcon className="absolute left-3 top-3 h-6 w-6 text-muted-foreground" />
+          </div>
+
+          <Button
+            type="submit"
+            size="lg"
+            className="h-12 px-6"
+            disabled={isLoading || !tempSearchValue.trim()}
+          >
+            {isLoading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              "Search"
+            )}
+          </Button>
+        </form>
+      </div>
 
       {isLoading ? (
         <div className="flex justify-center my-10">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
         </div>
       ) : error ? (
-        <h3 className="text-center text-sm mt-10">{error}</h3>
+        <div className="text-center text-lg text-destructive mt-10">
+          {error}
+        </div>
       ) : data.length === 0 && searchValue ? (
-        <h3 className="text-center text-sm mt-10">No results found</h3>
+        <div className="text-center text-lg text-muted-foreground mt-10">
+          No results found for {searchValue}
+        </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {data.map((item) => (
               <MovieCard key={item.id} item={item} type={item.media_type} />
             ))}
           </div>
 
           {totalPages > 1 && (
-            <div className="mt-6">
+            <div className="mt-8">
               <PaginationComponent
                 activePage={activePage}
                 totalPages={totalPages}

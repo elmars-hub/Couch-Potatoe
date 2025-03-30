@@ -138,12 +138,6 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent className="grid gap-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div className="space-y-2">
               {/* Email Input */}
@@ -229,6 +223,12 @@ export default function LoginPage() {
             </Link>
           </div>
         </CardContent>
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </Card>
     </div>
   );

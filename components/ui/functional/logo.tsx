@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const Logo = () => {
   return (
-    <div className="flex items-center gap-2 font-semibold text-lg">
+    <div className="flex items-center gap-2 font-semibold text-lg transition-all hover:scale-105">
       <Image
         src="/images/logo.png"
         alt="Logo"

@@ -1,8 +1,17 @@
 "use client";
 
+import Footer from "@/components/ui/functional/footer";
 import MovieCard from "@/components/ui/functional/movie-card";
 import PaginationComponent from "@/components/ui/functional/paginationcomponent";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { fetchMovies, SortBy } from "@/lib/movies";
+import { Label } from "@radix-ui/react-dropdown-menu";
 import { useEffect, useState } from "react";
 
 interface Movie {
@@ -58,9 +67,9 @@ export default function Movies() {
     loadMovies();
   }, [activePage, sortBy]);
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSortChange = (value: string) => {
     setActivePage(1);
-    setSortBy(e.target.value as SortBy);
+    setSortBy(value as SortBy);
   };
 
   if (error) {
@@ -73,18 +82,19 @@ export default function Movies() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex items-baseline gap-4 my-10">
-        <h2 className="text-md uppercase font-semibold">Discover Movies</h2>
-        <select
-          className="w-[130px] border rounded py-1 px-2"
-          value={sortBy}
-          onChange={handleSortChange}
-        >
-          <option value="popularity.desc">Popular</option>
-          <option value="vote_average.desc&vote_count.gte=1000">
-            Top Rated
-          </option>
-        </select>
+      <div className="flex items-center gap-4 my-10">
+        <Label className="text-lg font-semibold">Discover Movies</Label>
+        <Select value={sortBy} onValueChange={handleSortChange}>
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Sort by..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="popularity.desc">Popular</SelectItem>
+            <SelectItem value="vote_average.desc&vote_count.gte=1000">
+              Top Rated
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {isLoading
@@ -107,6 +117,8 @@ export default function Movies() {
           />
         </div>
       )}
+
+      <Footer />
     </div>
   );
 }
